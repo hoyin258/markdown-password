@@ -1,0 +1,1 @@
+# obsidian-ext-pwd-protect
