@@ -6,7 +6,7 @@ export class UnlockModal extends Modal {
   constructor(app: App, private core: VaultCore, private onDone: (s: boolean) => void) { super(app); }
   onOpen() {
     const { contentEl } = this;
-    contentEl.createEl("h2", { text: "Show Markdown Passwords" });
+    contentEl.createEl("h2", { text: "Unlock & Auto-Encrypt" });
     new Setting(contentEl).setName("Master Key").addText(t => {
       const input = t.setPlaceholder("Enter password").onChange(v => this.pass = v).inputEl;
       input.type = "password";
@@ -14,7 +14,7 @@ export class UnlockModal extends Modal {
         if (e.key === "Enter") await this.attemptUnlock();
       });
     });
-    new Setting(contentEl).addButton(b => b.setButtonText("Show Passwords").setCta().onClick(() => this.attemptUnlock()));
+    new Setting(contentEl).addButton(b => b.setButtonText("Unlock & Enable Encryption").setCta().onClick(() => this.attemptUnlock()));
   }
 
   async attemptUnlock() {
@@ -33,7 +33,7 @@ export class VaultSettingsTab extends PluginSettingTab {
     containerEl.createEl("h2", { text: "Markdown Password Settings" });
 
     const isUnlocked = this.core.isUnlocked();
-    const status = isUnlocked ? "Revealed" : "Hidden";
+    const status = isUnlocked ? "Unlocked (Auto-encrypt ON)" : "Locked (Auto-encrypt OFF)";
     
     const statusEl = containerEl.createEl("p", { text: `Status: ${status}` });
     statusEl.style.color = isUnlocked ? "var(--text-success)" : "var(--text-error)";
@@ -42,7 +42,7 @@ export class VaultSettingsTab extends PluginSettingTab {
     if (!isUnlocked) {
       new Setting(containerEl)
         .setName("Master Key")
-        .setDesc("Enter password to show or create encrypted data")
+        .setDesc("Enter master key to unlock and enable automatic encryption.")
         .addText(t => {
           t.inputEl.type = "password";
           t.onChange(v => this.tempPass = v);
@@ -52,15 +52,15 @@ export class VaultSettingsTab extends PluginSettingTab {
         });
 
       new Setting(containerEl)
-        .addButton(b => b.setButtonText("Show Password").setCta().onClick(() => this.handleUnlock()));
+        .addButton(b => b.setButtonText("Unlock & Auto-Encrypt").setCta().onClick(() => this.handleUnlock()));
     } else {
       new Setting(containerEl)
-        .setName("Privacy Control")
-        .setDesc("Hide all decrypted content from memory")
-        .addButton(b => b.setButtonText("Hide Password").onClick(() => {
+        .setName("Privacy & Protection Control")
+        .setDesc("Lock the vault and stop automatic encryption for new input.")
+        .addButton(b => b.setButtonText("Lock & Disable Encryption").onClick(() => {
           this.core.lock();
           this.display();
-          new Notice("Passwords hidden");
+          new Notice("Vault locked & Auto-encryption disabled");
         }));
     }
 

@@ -32,14 +32,17 @@ When you first use the plugin, you will be prompted to set a **Master Key**.
 
 ### 2. Create/Encrypt a Secret
 In the editor, simply type your secret inside the password brackets: `[|my-secret-password|]`.
-If your status is **Revealed**, the plugin will automatically:
+If your status is **Unlocked (Auto-encrypt ON)**, the plugin will automatically:
 1. Encrypt the text using **AES-256-GCM**.
 2. Store the encrypted data in `vault.json`.
 3. Replace your text with a secure placeholder: `[|vault:v_abc123|]`.
 
-### 3. Show/Hide Passwords
-- **Show**: Use Command Palette (`Cmd + P`) -> `Markdown Password: Show Password`. Enter your Master Key to reveal all secrets in the current note.
-- **Hide**: Use Command Palette (`Cmd + P`) -> `Markdown Password: Hide Password`. This instantly clears the keys from memory.
+> [!IMPORTANT]
+> If the vault is **Locked**, typing `[|secret|]` will remain as plain text and will **not** be protected.
+
+### 3. Unlock/Lock Secrets
+- **Unlock & Auto-Encrypt**: Use Command Palette (`Cmd + P`) -> `Markdown Password: Unlock & Auto-Encrypt`. Enter your Master Key to reveal all secrets and enable automatic encryption for new input.
+- **Lock & Disable Encryption**: Use Command Palette (`Cmd + P`) -> `Markdown Password: Lock & Disable Encryption`. This clears the keys from memory and stops the auto-encryption process.
 
 ---
 

@@ -25,18 +25,18 @@ export default class ObsidianMarkdownPassword extends Plugin {
 
     // Commands
     this.addCommand({
-      id: "show-password",
-      name: "Show Password",
+      id: "unlock-auto-encrypt",
+      name: "Unlock & Auto-Encrypt",
       callback: () => this.promptUnlock()
     });
 
     this.addCommand({
-      id: "hide-password",
-      name: "Hide Password",
+      id: "lock-disable-encryption",
+      name: "Lock & Disable Encryption",
       callback: () => {
         this.core.lock();
         this.refresh();
-        new Notice("Passwords hidden");
+        new Notice("Vault locked & Auto-encryption disabled");
       }
     });
 
@@ -50,7 +50,7 @@ export default class ObsidianMarkdownPassword extends Plugin {
   promptUnlock() {
     new UnlockModal(this.app, this.core, (ok) => {
       if (ok) {
-        new Notice("Passwords revealed");
+        new Notice("Vault unlocked & Auto-encryption enabled");
         this.refresh();
       }
     }).open();
