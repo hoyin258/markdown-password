@@ -1,0 +1,10 @@
+# .gitignore
+.obsidian/vault.json
+secrets.json
+*.local
+node_modules
+.DS_Store
+test-obs-ext/*
+bin/
+main.js
+test-folder/*

@@ -1,0 +1,37 @@
+{
+  "name": "obsidian-markdown-password",
+  "version": "1.0.0",
+  "description": "markdown password and secret management for Obsidian",
+  "main": "main.js",
+  "scripts": {
+    "build": "tsc -noEmit -skipLibCheck && node esbuild.config.mjs production && mkdir -p ./bin && cp manifest.json ./bin/",
+    "test": "mkdir -p ./test-folder/.obsidian/plugins/obsidian-markdown-password && cp ./bin/main.js ./test-folder/.obsidian/plugins/obsidian-markdown-password/ && cp ./bin/manifest.json ./test-folder/.obsidian/plugins/obsidian-markdown-password/",
+    "dev": "npm run build && npm run test",
+    "watch": "node esbuild.config.mjs",
+    "unit-test": "vitest run",
+    "unit-test:watch": "vitest"
+  },
+   "keywords": [
+     "obsidian",
+     "password",
+     "security",
+     "encryption"
+   ],
+   "author": "",
+   "license": "MIT",
+   "dependencies": {
+     "@scure/bip39": "^1.2.0"
+   },
+   "devDependencies": {
+    "@codemirror/state": "^6.4.0",
+    "@codemirror/view": "^6.23.0",
+    "@lezer/common": "^1.2.1",
+    "@types/node": "^16.11.6",
+    "builtin-modules": "^3.3.0",
+    "esbuild": "0.17.3",
+    "obsidian": "latest",
+    "tslib": "2.6.2",
+    "typescript": "5.3.3",
+    "vitest": "^4.0.17"
+  }
+}
