@@ -1,3 +1,5 @@
+import { App } from "obsidian";
+
 export interface VaultEntry {
   iv: string;
   data: string;
@@ -20,7 +22,7 @@ export class VaultCore {
   private vaultPath: string;
   private ALGO = "AES-GCM";
 
-  constructor(private app: any) {
+  constructor(private app: App) {
     this.vaultPath = `${this.app.vault.configDir}/plugins/markdown-password/vault.json`;
   }
 

@@ -9,29 +9,37 @@
     "dev": "npm run build && npm run test",
     "watch": "node esbuild.config.mjs",
     "unit-test": "vitest run",
-    "unit-test:watch": "vitest"
+    "unit-test:watch": "vitest",
+    "lint": "eslint . --ext .ts",
+    "lint:fix": "eslint . --ext .ts --fix"
   },
-   "keywords": [
-     "obsidian",
-     "password",
-     "security",
-     "encryption"
-   ],
-   "author": "",
-   "license": "MIT",
-   "dependencies": {
-     "@scure/bip39": "^1.2.0"
-   },
-   "devDependencies": {
+  "keywords": [
+    "obsidian",
+    "password",
+    "security",
+    "encryption"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@scure/bip39": "^1.2.0"
+  },
+  "devDependencies": {
     "@codemirror/state": "^6.4.0",
     "@codemirror/view": "^6.23.0",
+    "@eslint/js": "^9.39.2",
     "@lezer/common": "^1.2.1",
     "@types/node": "^16.11.6",
+    "@typescript-eslint/eslint-plugin": "^8.53.0",
+    "@typescript-eslint/parser": "^8.53.0",
     "builtin-modules": "^3.3.0",
     "esbuild": "0.17.3",
+    "eslint": "^9.39.2",
+    "eslint-plugin-obsidian": "^2.28.0",
     "obsidian": "latest",
     "tslib": "2.6.2",
     "typescript": "5.3.3",
+    "typescript-eslint": "^8.53.0",
     "vitest": "^4.0.17"
   }
 }

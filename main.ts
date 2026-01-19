@@ -40,7 +40,7 @@ export default class ObsidianMarkdownPassword extends Plugin {
       }
     });
 
-    console.log("Markdown Password Loaded");
+    console.debug("Markdown Password Loaded");
   }
 
   onunload() {

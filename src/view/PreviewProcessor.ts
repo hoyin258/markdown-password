@@ -5,7 +5,7 @@ export class PreviewProcessor {
   constructor(private core: VaultCore) {}
 
   get processor() {
-    return async (el: HTMLElement, ctx: MarkdownPostProcessorContext) => {
+    return async (el: HTMLElement, _ctx: MarkdownPostProcessorContext) => {
       const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
       let node;
       const tasks: (() => Promise<void>)[] = [];
@@ -15,7 +15,7 @@ export class PreviewProcessor {
         if (text.includes("[|vault:")) {
           const currentNode = node;
           tasks.push(async () => {
-            const regex = /\[\|vault:([^\|]+)\|\]/g;
+            const regex = /\[\|vault:([^|]+)\|\]/g;
             let m;
             const fragment = document.createDocumentFragment();
             let lastIdx = 0;
@@ -29,12 +29,9 @@ export class PreviewProcessor {
                 const span = document.createElement("span");
                 span.textContent = secret;
                 span.className = "vault-revealed";
-                Object.assign(span.style, {
-                  background: "var(--text-accent)", color: "var(--text-on-accent)",
-                  padding: "2px 6px", borderRadius: "4px", cursor: "pointer"
-                });
-                span.onclick = () => {
-                  navigator.clipboard.writeText(secret);
+                span.onclick = (e) => {
+                  e.preventDefault();
+                  void navigator.clipboard.writeText(secret);
                   const old = span.textContent;
                   span.textContent = "Copied!";
                   setTimeout(() => span.textContent = old, 1000);
@@ -43,7 +40,7 @@ export class PreviewProcessor {
               } catch {
                 const err = document.createElement("span");
                 err.textContent = "[|locked|]";
-                err.style.color = "var(--text-error)";
+                err.className = "vault-error";
                 fragment.appendChild(err);
               }
               lastIdx = m.index + m[0].length;

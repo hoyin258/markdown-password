@@ -8,12 +8,7 @@ class SecretWidget extends WidgetType {
   toDOM() {
     const span = document.createElement("span");
     span.textContent = "🔒 " + (this.isId ? "Encrypted" : this.label);
-    span.className = this.isId ? "vault-locked" : "vault-typing";
-    Object.assign(span.style, {
-      background: this.isId ? "var(--text-accent)" : "var(--background-secondary)",
-      color: this.isId ? "var(--text-on-accent)" : "var(--text-muted)",
-      padding: "2px 6px", borderRadius: "4px", fontSize: "0.85em", fontWeight: "bold"
-    });
+    span.className = this.isId ? "vault-revealed" : "vault-typing";
     return span;
   }
 }
@@ -25,14 +20,16 @@ export const vaultExtension = (core: VaultCore) => ViewPlugin.fromClass(class {
   update(update: ViewUpdate) {
     if (update.docChanged || update.viewportChanged) {
       this.decorations = this.build(update.view);
-      if (update.docChanged) this.checkAutoEncrypt(update);
+      if (update.docChanged) {
+        void this.checkAutoEncrypt(update);
+      }
     }
   }
 
   build(view: EditorView) {
     const builder = new RangeSetBuilder<Decoration>();
     const text = view.state.doc.sliceString(0);
-    const regex = /\[\|([^\|]+)\|\]/g;
+    const regex = /\[\|([^|]+)\|\]/g;
     let m;
     while ((m = regex.exec(text)) !== null) {
       const isId = m[1].startsWith("vault:");
@@ -46,15 +43,19 @@ export const vaultExtension = (core: VaultCore) => ViewPlugin.fromClass(class {
 
   async checkAutoEncrypt(update: ViewUpdate) {
     const text = update.view.state.doc.sliceString(0);
-    const regex = /\[\|(?!vault:)([^\|]+)\|\]/g;
+    const regex = /\[\|(?!vault:)([^|]+)\|\]/g;
     let m;
     if ((m = regex.exec(text)) !== null) {
       if (!core.isUnlocked()) return;
-      const id = await core.addSecret(m[1]);
-      const newText = `[|vault:${id}|]`;
-      update.view.dispatch({
-        changes: { from: m.index, to: m.index + m[0].length, insert: newText }
-      });
+      try {
+        const id = await core.addSecret(m[1]);
+        const newText = `[|vault:${id}|]`;
+        update.view.dispatch({
+          changes: { from: m.index, to: m.index + m[0].length, insert: newText }
+        });
+      } catch (e) {
+        console.error("Auto-encrypt failed", e);
+      }
     }
   }
 }, { decorations: v => v.decorations });
