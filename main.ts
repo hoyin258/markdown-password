@@ -26,21 +26,21 @@ export default class ObsidianMarkdownPassword extends Plugin {
     // Commands
     this.addCommand({
       id: "unlock-auto-encrypt",
-      name: "Unlock & Auto-Encrypt",
+      name: "Unlock & auto-encrypt",
       callback: () => this.promptUnlock()
     });
 
     this.addCommand({
       id: "lock-disable-encryption",
-      name: "Lock & Disable Encryption",
+      name: "Lock & disable encryption",
       callback: () => {
         this.core.lock();
         this.refresh();
-        new Notice("Vault locked & Auto-encryption disabled");
+        new Notice("Vault locked & auto-encryption disabled");
       }
     });
 
-    console.debug("Markdown Password Loaded");
+    console.debug("Markdown password loaded");
   }
 
   onunload() {
@@ -50,7 +50,7 @@ export default class ObsidianMarkdownPassword extends Plugin {
   promptUnlock() {
     new UnlockModal(this.app, this.core, (ok) => {
       if (ok) {
-        new Notice("Vault unlocked & Auto-encryption enabled");
+        new Notice("Vault unlocked & auto-encryption enabled");
         this.refresh();
       }
     }).open();

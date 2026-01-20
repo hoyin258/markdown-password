@@ -21,18 +21,18 @@ export class UnlockModal extends Modal {
   constructor(app: App, private core: VaultCore, private onDone: (s: boolean) => void) { super(app); }
   onOpen() {
     const { contentEl } = this;
-    new Setting(contentEl).setHeading().setName("Unlock & Auto-Encrypt");
-    new Setting(contentEl).setName("Master Key").addText(t => {
+    new Setting(contentEl).setHeading().setName("Unlock & auto-encrypt");
+    new Setting(contentEl).setName("Master key").addText(t => {
       const input = t.setPlaceholder("Enter password").onChange(v => this.pass = v).inputEl;
       input.type = "password";
-      input.addEventListener("keydown", async (e) => {
+      input.addEventListener("keydown", (e) => {
         if (e.key === "Enter") {
           e.preventDefault();
-          await this.attemptUnlock();
+          void this.attemptUnlock();
         }
       });
     });
-    new Setting(contentEl).addButton(b => b.setButtonText("Unlock & Enable Encryption").setCta().onClick(() => {
+    new Setting(contentEl).addButton(b => b.setButtonText("Unlock & enable encryption").setCta().onClick(() => {
         void this.attemptUnlock();
     }));
   }
@@ -40,7 +40,7 @@ export class UnlockModal extends Modal {
   async attemptUnlock() {
     const ok = await this.core.unlock(this.pass);
     if (ok) { this.onDone(true); this.close(); }
-    else new Notice("Invalid Password");
+    else new Notice("Invalid password");
   }
 }
 
@@ -50,10 +50,10 @@ export class VaultSettingsTab extends PluginSettingTab {
   display() {
     const { containerEl } = this;
     containerEl.empty();
-    new Setting(containerEl).setHeading().setName("Markdown Password Settings");
+    new Setting(containerEl).setHeading().setName("Markdown password settings");
 
     const isUnlocked = this.core.isUnlocked();
-    const status = isUnlocked ? "Unlocked (Auto-encrypt ON)" : "Locked (Auto-encrypt OFF)";
+    const status = isUnlocked ? "Unlocked (auto-encrypt ON)" : "Locked (auto-encrypt OFF)";
     
     new Setting(containerEl)
         .setName("Status")
@@ -69,44 +69,45 @@ export class VaultSettingsTab extends PluginSettingTab {
 
     if (!isUnlocked) {
       new Setting(containerEl)
-        .setName("Master Key")
+        .setName("Master key")
         .setDesc("Enter master key to unlock and enable automatic encryption.")
         .addText(t => {
           t.inputEl.type = "password";
           t.onChange(v => this.tempPass = v);
-          t.inputEl.addEventListener("keydown", async (e) => {
+          t.inputEl.addEventListener("keydown", (e) => {
             if (e.key === "Enter") {
                 e.preventDefault();
-                await this.handleUnlock();
+                void this.handleUnlock();
             }
           });
         });
 
       new Setting(containerEl)
-        .addButton(b => b.setButtonText("Unlock & Auto-Encrypt").setCta().onClick(() => {
+        .addButton(b => b.setButtonText("Unlock & auto-encrypt").setCta().onClick(() => {
             void this.handleUnlock();
         }));
     } else {
       new Setting(containerEl)
-        .setName("Privacy & Protection Control")
+        .setName("Privacy & protection control")
         .setDesc("Lock the vault and stop automatic encryption for new input.")
-        .addButton(b => b.setButtonText("Lock & Disable Encryption").onClick(() => {
+        .addButton(b => b.setButtonText("Lock & disable encryption").onClick(() => {
           this.core.lock();
           this.display();
-          new Notice("Vault locked & Auto-encryption disabled");
+          new Notice("Vault locked & auto-encryption disabled");
         }));
     }
 
-    new Setting(containerEl).setHeading().setName("Danger Zone");
+    new Setting(containerEl).setHeading().setName("Danger zone");
 
     new Setting(containerEl)
-      .setName("Reset Vault")
+      .setName("Reset vault")
       .setDesc("Permanently delete all encrypted data. This cannot be undone.")
       .addButton(b => b.setButtonText("Reset").setWarning().onClick(() => {
-        new ConfirmModal(this.app, "Delete all encrypted data? This is permanent.", async () => {
-          await this.core.reset();
-          new Notice("Vault deleted");
-          this.display();
+        new ConfirmModal(this.app, "Delete all encrypted data? This is permanent.", () => {
+          void this.core.reset().then(() => {
+            new Notice("Vault deleted");
+            this.display();
+          });
         }).open();
       }));
   }
@@ -119,7 +120,7 @@ export class VaultSettingsTab extends PluginSettingTab {
       this.tempPass = "";
       this.display();
     } else {
-      new Notice("Invalid Password");
+      new Notice("Invalid password");
     }
   }
 }
