@@ -33,10 +33,20 @@ export const vaultExtension = (core: VaultCore) => ViewPlugin.fromClass(class {
     let m;
     while ((m = regex.exec(text)) !== null) {
       const isId = m[1].startsWith("vault:");
-      builder.add(m.index, m.index + m[0].length, Decoration.widget({
-        widget: new SecretWidget(m[1], isId),
-        side: 1
-      }));
+      if (isId) {
+        // Use Decoration.replace to hide the underlying [|vault:id|] text.
+        // This makes the entire token [|vault:id|] behave as a single atomic unit.
+        builder.add(m.index, m.index + m[0].length, Decoration.replace({
+          widget: new SecretWidget(m[1], isId),
+        }));
+      } else {
+        // For new input [|password|], show it as a widget next to the text
+        // so the user knows it's being processed.
+        builder.add(m.index, m.index + m[0].length, Decoration.widget({
+          widget: new SecretWidget(m[1], isId),
+          side: 1
+        }));
+      }
     }
     return builder.finish();
   }
@@ -58,4 +68,9 @@ export const vaultExtension = (core: VaultCore) => ViewPlugin.fromClass(class {
       }
     }
   }
-}, { decorations: v => v.decorations });
+}, { 
+  decorations: v => v.decorations,
+  provide: plugin => EditorView.atomicRanges.of(view => {
+    return view.plugin(plugin)?.decorations || Decoration.none;
+  })
+});
